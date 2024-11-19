@@ -1,58 +1,97 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-import './App.css';
+import * as React from "react";
+import { CssVarsProvider } from "@mui/joy/styles";
+import CssBaseline from "@mui/joy/CssBaseline";
+import Box from "@mui/joy/Box";
+import Button from "@mui/joy/Button";
+import Breadcrumbs from "@mui/joy/Breadcrumbs";
+import Link from "@mui/joy/Link";
+import Typography from "@mui/joy/Typography";
 
-function App() {
+import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
+import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
+import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
+
+import Sidebar from "./components/Sidebar";
+// import OrderTable from "./components/OrderTable";
+// import OrderList from "./components/OrderList";
+import Header from "./components/Header";
+
+export default function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
+    <CssVarsProvider disableTransitionOnChange>
+      <CssBaseline />
+      <Box sx={{ display: "flex", minHeight: "100dvh" }}>
+        <Header />
+        <Sidebar />
+        <Box
+          component="main"
+          className="MainContent"
+          sx={{
+            px: { xs: 2, md: 6 },
+            pt: {
+              xs: "calc(12px + var(--Header-height))",
+              sm: "calc(12px + var(--Header-height))",
+              md: 3,
+            },
+            pb: { xs: 2, sm: 2, md: 3 },
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            minWidth: 0,
+            height: "100dvh",
+            gap: 1,
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Breadcrumbs
+              size="sm"
+              aria-label="breadcrumbs"
+              separator={<ChevronRightRoundedIcon />}
+              sx={{ pl: 0 }}
+            >
+              <Link
+                underline="none"
+                color="neutral"
+                href="#some-link"
+                aria-label="Home"
+              >
+                <HomeRoundedIcon />
+              </Link>
+              <Link
+                underline="hover"
+                color="neutral"
+                href="#some-link"
+                sx={{ fontSize: 12, fontWeight: 500 }}
+              >
+                Dashboard
+              </Link>
+              <Typography
+                color="primary"
+                sx={{ fontWeight: 500, fontSize: 12 }}
+              >
+                Orders
+              </Typography>
+            </Breadcrumbs>
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              mb: 1,
+              gap: 1,
+              flexDirection: { xs: "column", sm: "row" },
+              alignItems: { xs: "start", sm: "center" },
+              flexWrap: "wrap",
+              justifyContent: "space-between",
+            }}
           >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
-    </div>
+            <Typography level="h2" component="h1">
+              Orders
+            </Typography>
+          </Box>
+          {/* <OrderTable />
+          <OrderList /> */}
+        </Box>
+      </Box>
+    </CssVarsProvider>
   );
 }
-
-export default App;
