@@ -2,21 +2,37 @@ import * as React from "react";
 import { CssVarsProvider } from "@mui/joy/styles";
 import CssBaseline from "@mui/joy/CssBaseline";
 import Box from "@mui/joy/Box";
-import Button from "@mui/joy/Button";
-import Breadcrumbs from "@mui/joy/Breadcrumbs";
-import Link from "@mui/joy/Link";
 import Typography from "@mui/joy/Typography";
 
-import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
-import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
-import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
-
 import Sidebar from "./components/Sidebar";
-// import OrderTable from "./components/OrderTable";
-// import OrderList from "./components/OrderList";
 import Header from "./components/Header";
+import { useSelector } from "react-redux";
+import { RootState } from "./app/store";
+import Home from "./features/home/Home";
+import InvoiceScreen from "./features/invoiceScreen/Invoice";
+import ProductScreen from "./features/productScreen/Product";
+import CustomerScreen from "./features/customerScreen/Customer";
 
 export default function App() {
+  const currentScreen = useSelector(
+    (state: RootState) => state.screen.currentScreen
+  );
+
+  const renderScreen = () => {
+    switch (currentScreen) {
+      case "Home":
+        return <Home />;
+      case "Invoices":
+        return <InvoiceScreen />;
+      case "Products":
+        return <ProductScreen />;
+      case "Customers":
+        return <CustomerScreen />;
+      default:
+        return <Typography level="h1">Unknown Screen</Typography>;
+    }
+  };
+
   return (
     <CssVarsProvider disableTransitionOnChange>
       <CssBaseline />
@@ -42,54 +58,7 @@ export default function App() {
             gap: 1,
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Breadcrumbs
-              size="sm"
-              aria-label="breadcrumbs"
-              separator={<ChevronRightRoundedIcon />}
-              sx={{ pl: 0 }}
-            >
-              <Link
-                underline="none"
-                color="neutral"
-                href="#some-link"
-                aria-label="Home"
-              >
-                <HomeRoundedIcon />
-              </Link>
-              <Link
-                underline="hover"
-                color="neutral"
-                href="#some-link"
-                sx={{ fontSize: 12, fontWeight: 500 }}
-              >
-                Dashboard
-              </Link>
-              <Typography
-                color="primary"
-                sx={{ fontWeight: 500, fontSize: 12 }}
-              >
-                Orders
-              </Typography>
-            </Breadcrumbs>
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              mb: 1,
-              gap: 1,
-              flexDirection: { xs: "column", sm: "row" },
-              alignItems: { xs: "start", sm: "center" },
-              flexWrap: "wrap",
-              justifyContent: "space-between",
-            }}
-          >
-            <Typography level="h2" component="h1">
-              Orders
-            </Typography>
-          </Box>
-          {/* <OrderTable />
-          <OrderList /> */}
+          {renderScreen()}
         </Box>
       </Box>
     </CssVarsProvider>

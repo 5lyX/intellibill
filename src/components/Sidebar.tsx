@@ -1,10 +1,8 @@
 import * as React from "react";
 import GlobalStyles from "@mui/joy/GlobalStyles";
 import Box from "@mui/joy/Box";
-import Divider from "@mui/joy/Divider";
 import IconButton from "@mui/joy/IconButton";
 import List from "@mui/joy/List";
-import LinearProgress from "@mui/joy/LinearProgress";
 import ListItem from "@mui/joy/ListItem";
 import ListItemButton, { listItemButtonClasses } from "@mui/joy/ListItemButton";
 import ListItemContent from "@mui/joy/ListItemContent";
@@ -22,6 +20,9 @@ import { closeSidebar } from "../app/utils";
 import Button from "@mui/joy/Button";
 import Card from "@mui/joy/Card";
 import Stack from "@mui/joy/Stack";
+import { useDispatch, useSelector } from "react-redux";
+import { setScreen } from "../features/screen/screenSlice";
+import { RootState } from "../app/store";
 
 function Toggler({
   defaultExpanded = false,
@@ -58,6 +59,14 @@ function Toggler({
 }
 
 export default function Sidebar() {
+  const dispatch = useDispatch();
+  const currentScreen = useSelector(
+    (state: RootState) => state.screen.currentScreen
+  );
+  const handleScreenChange = (screen: string) => {
+    dispatch(setScreen(screen));
+  };
+
   return (
     <Sheet
       className="Sidebar"
@@ -138,7 +147,10 @@ export default function Sidebar() {
           }}
         >
           <ListItem>
-            <ListItemButton>
+            <ListItemButton
+              selected={currentScreen === "Home"}
+              onClick={() => handleScreenChange("Home")}
+            >
               <HomeRoundedIcon />
               <ListItemContent>
                 <Typography level="title-sm">Home</Typography>
@@ -147,7 +159,10 @@ export default function Sidebar() {
           </ListItem>
 
           <ListItem>
-            <ListItemButton>
+            <ListItemButton
+              selected={currentScreen === "Invoices"}
+              onClick={() => handleScreenChange("Invoices")}
+            >
               <DashboardRoundedIcon />
               <ListItemContent>
                 <Typography level="title-sm">Invoices</Typography>
@@ -156,7 +171,10 @@ export default function Sidebar() {
           </ListItem>
 
           <ListItem>
-            <ListItemButton selected>
+            <ListItemButton
+              selected={currentScreen === "Products"}
+              onClick={() => handleScreenChange("Products")}
+            >
               <ShoppingCartRoundedIcon />
               <ListItemContent>
                 <Typography level="title-sm">Products</Typography>
@@ -165,9 +183,8 @@ export default function Sidebar() {
           </ListItem>
           <ListItem>
             <ListItemButton
-              role="menuitem"
-              component="a"
-              href="/joy-ui/getting-started/templates/messages/"
+              selected={currentScreen === "Customers"}
+              onClick={() => handleScreenChange("Customers")}
             >
               <PeopleAltIcon />
               <ListItemContent>
