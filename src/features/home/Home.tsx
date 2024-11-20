@@ -1,25 +1,61 @@
 import { Card, List, ListItem, Stack, Typography } from "@mui/joy";
 import Box from "@mui/joy/Box";
+import axios from "axios";
 import { useState } from "react";
 
 export default function HomeScreen() {
-  const [fileName, setFileName] = useState(null);
+  const [fileName, setFileName] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadMessage, setUploadMessage] = useState("");
+  const [generatedText, setGeneratedText] = useState<string | null>(null);
 
-  const handleFileUpload = async (event: any) => {
-    const file = event.target.files[0];
+  const handleFileUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
     if (!file) return;
 
     setFileName(file.name);
     setIsUploading(true);
+    setGeneratedText(null);
+    setUploadMessage("");
+
+    const formData = new FormData();
+    formData.append("file", file); // Ensure the field name matches the backend
 
     try {
-      // const uploadedFile = await uploadFileToGemini(file);
-      // setUploadMessage(`File uploaded successfully! URI: ${uploadedFile.uri}`);
-      setUploadMessage(`File uploaded successfully! URI:`);
+      // Upload file via `file-service`
+      const fileResponse = await axios.post(
+        "/.netlify/functions/file-service",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      const fileData = fileResponse.data;
+      console.log("File uploaded:", fileData);
+
+      // Pass uploaded file URI to `gemini-service`
+      const geminiResponse = await axios.post(
+        "/.netlify/functions/gemini-service",
+        {
+          fileUri: fileData.fileUri,
+          mimeType: fileData.mimeType,
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      const geminiData = geminiResponse.data;
+      console.log("Gemini response:", geminiData);
+
+      setGeneratedText(geminiData.generatedText);
+      setUploadMessage("File processed successfully!");
     } catch (error) {
-      setUploadMessage("Error uploading file. Please try again.");
+      console.error("Error:", error);
+      setUploadMessage("An error occurred while processing the file.");
     } finally {
       setIsUploading(false);
     }
@@ -70,7 +106,7 @@ export default function HomeScreen() {
             </Typography>
           </ListItem>
           <ListItem>
-            <Typography level="body-xs">Max Size : 10 MB</Typography>
+            <Typography level="body-xs">Max Size : 2GB</Typography>
           </ListItem>
         </List>
       </Card>
@@ -104,12 +140,28 @@ export default function HomeScreen() {
       </Box>
       {isUploading ? (
         <Typography level="body-sm" color="neutral">
-          Uploading...
+          Uploading and processing...
         </Typography>
       ) : (
         <Typography level="body-sm" color="success">
           {uploadMessage}
         </Typography>
+      )}
+      {generatedText && (
+        <Box
+          sx={{
+            marginTop: 4,
+            padding: 2,
+            border: "1px solid #ccc",
+            borderRadius: "8px",
+            maxWidth: "800px",
+          }}
+        >
+          <Typography level="body-md">Generated Text:</Typography>
+          <Typography level="body-sm" sx={{ whiteSpace: "pre-wrap" }}>
+            {generatedText}
+          </Typography>
+        </Box>
       )}
     </Box>
   );
