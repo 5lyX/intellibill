@@ -6,15 +6,17 @@ import Typography from "@mui/joy/Typography";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import { useDispatch } from "react-redux";
+import CustomerTable from "../../components/CustomerTable";
 import { setScreen } from "../screen/screenSlice";
+import React from "react";
 
-export default function JoyOrderDashboardTemplate() {
+export default function CustomerScreen() {
   const dispatch = useDispatch();
   const handleScreenChange = (screen: string) => {
     dispatch(setScreen(screen));
   };
   return (
-    <Box>
+    <React.Fragment>
       <Box sx={{ display: "flex", alignItems: "center" }}>
         <Breadcrumbs
           size="sm"
@@ -45,6 +47,7 @@ export default function JoyOrderDashboardTemplate() {
           Customers
         </Typography>
       </Box>
-    </Box>
+      <CustomerTable />
+    </React.Fragment>
   );
 }

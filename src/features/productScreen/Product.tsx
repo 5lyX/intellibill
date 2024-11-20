@@ -7,14 +7,16 @@ import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import { useDispatch } from "react-redux";
 import { setScreen } from "../screen/screenSlice";
+import ProductTable from "../../components/ProductTable";
+import React from "react";
 
-export default function JoyOrderDashboardTemplate() {
+export default function ProductScreen() {
   const dispatch = useDispatch();
   const handleScreenChange = (screen: string) => {
     dispatch(setScreen(screen));
   };
   return (
-    <Box>
+    <React.Fragment>
       <Box sx={{ display: "flex", alignItems: "center" }}>
         <Breadcrumbs
           size="sm"
@@ -45,6 +47,7 @@ export default function JoyOrderDashboardTemplate() {
           Products
         </Typography>
       </Box>
-    </Box>
+      <ProductTable />
+    </React.Fragment>
   );
 }

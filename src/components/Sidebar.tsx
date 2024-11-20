@@ -1,7 +1,6 @@
 import * as React from "react";
 import GlobalStyles from "@mui/joy/GlobalStyles";
 import Box from "@mui/joy/Box";
-import IconButton from "@mui/joy/IconButton";
 import List from "@mui/joy/List";
 import ListItem from "@mui/joy/ListItem";
 import ListItemButton, { listItemButtonClasses } from "@mui/joy/ListItemButton";
@@ -11,7 +10,6 @@ import Sheet from "@mui/joy/Sheet";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
 import ShoppingCartRoundedIcon from "@mui/icons-material/ShoppingCartRounded";
-import BrightnessAutoRoundedIcon from "@mui/icons-material/BrightnessAutoRounded";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import UploadRoundedIcon from "@mui/icons-material/UploadRounded";
 
@@ -120,10 +118,9 @@ export default function Sidebar() {
         onClick={() => closeSidebar()}
       />
       <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-        <IconButton variant="soft" color="primary" size="sm">
-          <BrightnessAutoRoundedIcon />
-        </IconButton>
-        <Typography level="title-lg">IntelliBill</Typography>
+        <Typography level="title-lg">
+          <span style={{ fontStyle: "italic" }}>Intelli</span>Bill
+        </Typography>
         <ColorSchemeToggle sx={{ ml: "auto" }} />
       </Box>
       <Box
