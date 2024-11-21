@@ -2,12 +2,18 @@ import { Card, List, ListItem, Stack, Typography } from "@mui/joy";
 import Box from "@mui/joy/Box";
 import axios from "axios";
 import { useState } from "react";
+import { appendUniqueIds } from "../../app/utils";
+import { useDispatch } from "react-redux";
+import { addCustomer } from "../customerScreen/customerSlice";
+import { addProduct } from "../productScreen/productSlice";
+import { addInvoice } from "../invoiceScreen/invoiceSlice";
 
 export default function HomeScreen() {
   const [fileName, setFileName] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadMessage, setUploadMessage] = useState("");
   const [generatedText, setGeneratedText] = useState<string | null>(null);
+  const dispatch = useDispatch();
 
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -21,10 +27,9 @@ export default function HomeScreen() {
     setUploadMessage("");
 
     const formData = new FormData();
-    formData.append("file", file); // Ensure the field name matches the backend
+    formData.append("file", file);
 
     try {
-      // Upload file via `file-service`
       const fileResponse = await axios.post(
         "/.netlify/functions/file-service",
         formData,
@@ -36,7 +41,6 @@ export default function HomeScreen() {
       const fileData = fileResponse.data;
       console.log("File uploaded:", fileData);
 
-      // Pass uploaded file URI to `gemini-service`
       const geminiResponse = await axios.post(
         "/.netlify/functions/gemini-service",
         {
@@ -53,6 +57,14 @@ export default function HomeScreen() {
 
       setGeneratedText(geminiData.generatedText);
       setUploadMessage("File processed successfully!");
+      const parsedData = JSON.parse(geminiData.generatedText);
+
+      const processedData = appendUniqueIds(parsedData);
+      const flattenedCustomers = processedData.customers.flat();
+      console.log(flattenedCustomers);
+      dispatch(addCustomer(processedData.customers));
+      dispatch(addProduct(processedData.products));
+      dispatch(addInvoice(processedData.invoices));
     } catch (error) {
       console.error("Error:", error);
       setUploadMessage("An error occurred while processing the file.");
@@ -77,7 +89,7 @@ export default function HomeScreen() {
       <Box sx={{ minHeight: 20 }}></Box>
       <Typography level="body-md">
         Drag and drop a file or click the button below to upload it. Files up to
-        2GB are supported.
+        20MB are supported.
       </Typography>
       <Box sx={{ minHeight: 20 }}></Box>
       <Card
@@ -106,7 +118,7 @@ export default function HomeScreen() {
             </Typography>
           </ListItem>
           <ListItem>
-            <Typography level="body-xs">Max Size : 2GB</Typography>
+            <Typography level="body-xs">Max Size : 20MB</Typography>
           </ListItem>
         </List>
       </Card>

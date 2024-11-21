@@ -12,133 +12,145 @@ export const handler: Handler = async (event: any) => {
         "JSON output containing invoices, products, and customers information",
       type: SchemaType.OBJECT,
       properties: {
-        Invoices: {
+        invoices: {
           type: SchemaType.ARRAY,
           description: "List of invoices",
           items: {
             type: SchemaType.OBJECT,
             properties: {
-              SerialNumber: {
+              serialNumber: {
                 type: SchemaType.STRING,
                 description: "Serial number of the invoice",
                 nullable: false,
               },
-              CustomerName: {
+              customerName: {
                 type: SchemaType.STRING,
                 description: "Name of the customer",
                 nullable: false,
               },
-              ProductName: {
+              productName: {
                 type: SchemaType.STRING,
                 description: "Name of the product",
                 nullable: false,
               },
-              Quantity: {
+              quantity: {
                 type: SchemaType.NUMBER,
                 description: "Quantity of the product",
                 nullable: false,
               },
-              Tax: {
+              tax: {
                 type: SchemaType.NUMBER,
                 description: "Tax applied to the product",
                 nullable: false,
               },
-              TotalAmount: {
+              taxPercentage: {
+                type: SchemaType.NUMBER,
+                description: "Total tax percentage applied to the product",
+                nullable: false,
+              },
+              totalAmount: {
                 type: SchemaType.NUMBER,
                 description: "Total amount for the invoice",
                 nullable: false,
               },
-              Date: {
+              date: {
                 type: SchemaType.STRING,
                 description: "Date of the invoice",
                 nullable: false,
               },
             },
             required: [
-              "SerialNumber",
-              "CustomerName",
-              "ProductName",
-              "Quantity",
-              "Tax",
-              "TotalAmount",
-              "Date",
+              "serialNumber",
+              "customerName",
+              "productName",
+              "quantity",
+              "tax",
+              "taxPercentage",
+              "totalAmount",
+              "date",
             ],
           },
         },
-        Products: {
+        products: {
           type: SchemaType.ARRAY,
           description: "List of products",
           items: {
             type: SchemaType.OBJECT,
             properties: {
-              Name: {
+              name: {
                 type: SchemaType.STRING,
                 description: "Name of the product",
                 nullable: false,
               },
-              Quantity: {
+              quantity: {
                 type: SchemaType.NUMBER,
                 description: "Available quantity of the product",
                 nullable: false,
               },
-              UnitPrice: {
+              unitPrice: {
                 type: SchemaType.NUMBER,
                 description: "Unit price of the product",
                 nullable: false,
               },
-              Tax: {
+              tax: {
                 type: SchemaType.NUMBER,
                 description: "Tax applied to the product",
                 nullable: false,
               },
-              PriceWithTax: {
+              taxPercentage: {
+                type: SchemaType.NUMBER,
+                description: "Total tax percentage applied to the product",
+                nullable: false,
+              },
+              priceWithTax: {
                 type: SchemaType.NUMBER,
                 description: "Price of the product including tax",
                 nullable: false,
               },
-              Discount: {
+              discount: {
                 type: SchemaType.NUMBER,
                 description: "Discount applied to the product",
                 nullable: false,
               },
             },
             required: [
-              "Name",
-              "Quantity",
-              "UnitPrice",
-              "Tax",
-              "PriceWithTax",
-              "Discount",
+              "name",
+              "quantity",
+              "unitPrice",
+              "tax",
+              "taxPercentage",
+              "priceWithTax",
+              "discount",
             ],
           },
         },
-        Customers: {
+        customers: {
           type: SchemaType.ARRAY,
           description: "List of customers",
           items: {
             type: SchemaType.OBJECT,
             properties: {
-              CustomerName: {
+              customerName: {
                 type: SchemaType.STRING,
                 description: "Name of the customer",
                 nullable: false,
               },
-              PhoneNumber: {
+              phoneNumber: {
                 type: SchemaType.STRING,
                 description: "Phone number of the customer",
                 nullable: false,
               },
-              TotalPurchaseAmount: {
+              totalPurchaseAmount: {
                 type: SchemaType.NUMBER,
                 description: "Total amount spent by the customer",
                 nullable: false,
               },
             },
-            required: ["CustomerName", "PhoneNumber", "TotalPurchaseAmount"],
+            required: ["customerName", "phoneNumber", "totalPurchaseAmount"],
           },
         },
       },
-      required: ["Invoices", "Products", "Customers"],
+      required: ["invoices", "products", "customers"],
     };
 
     // const model = genAI.getGenerativeModel({
@@ -160,7 +172,33 @@ export const handler: Handler = async (event: any) => {
         },
       },
       {
-        text: "You are the best accountant in the world. Analyze the file and tell me the details asked. Fill '' for any missing data.",
+        text: `Analyze the given file (PDF, Excel, or Image) and extract the following details, organizing them into a structured JSON format based on the schema below:
+
+Invoices:
+
+Serial Number: The unique serial number of the invoice (e.g., 'INV-148CZS').
+Customer Name: The name of the customer associated with the invoice (e.g., 'Shounak').
+Product Name: The name of the product listed on the invoice (e.g., 'GEMS CHOCLATE POUCH').
+Quantity: The quantity of the product sold in the invoice (e.g., 1000).
+Tax: The tax applied to the product in the invoice (e.g., 15).
+Tax Percentage: The tax percentage applied to the product (e.g., 10%).
+Total Amount: The total amount for the invoice (e.g., 1000.50).
+Date: The date when the invoice was issued (e.g., '12 Nov 2024').
+Products:
+
+Product Name: The name of the product (e.g., 'IPHONE 16').
+Quantity: The available quantity of the product (e.g., 50).
+Unit Price: The price per unit of the product (e.g., 1000.0).
+Tax: The tax applied to the product (e.g., 100).
+Tax Percentage: The total tax percentage applied to the product (e.g., 10%).
+Price with Tax: The total price of the product after tax (e.g., 1100.0).
+Discount: The discount applied to the product (e.g., 50).
+Customers:
+
+Customer Name: The name of the customer (e.g., 'Shounak').
+Phone Number: The phone number of the customer (e.g., '123-456-7890').
+Total Purchase Amount: The total amount spent by the customer across all transactions (e.g., 5000.0).
+Ensure that all the required fields for invoices, products, and customers are extracted correctly and that each object follows the structure defined in the schema. The output should be a valid JSON object with an array for invoices, products, and customers.`,
       },
     ]);
     return {

@@ -14,13 +14,17 @@ import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import UploadRoundedIcon from "@mui/icons-material/UploadRounded";
 
 import ColorSchemeToggle from "./ColorSchemeToggle";
-import { closeSidebar } from "../app/utils";
+import { appendUniqueIds, closeSidebar } from "../app/utils";
 import Button from "@mui/joy/Button";
 import Card from "@mui/joy/Card";
 import Stack from "@mui/joy/Stack";
 import { useDispatch, useSelector } from "react-redux";
 import { setScreen } from "../features/screen/screenSlice";
 import { RootState } from "../app/store";
+import axios from "axios";
+import { addCustomer } from "../features/customerScreen/customerSlice";
+import { addProduct } from "../features/productScreen/productSlice";
+import { addInvoice } from "../features/invoiceScreen/invoiceSlice";
 
 function Toggler({
   defaultExpanded = false,
@@ -64,7 +68,51 @@ export default function Sidebar() {
   const handleScreenChange = (screen: string) => {
     dispatch(setScreen(screen));
   };
+  const handleFileUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append("file", file);
 
+    try {
+      const fileResponse = await axios.post(
+        "/.netlify/functions/file-service",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      const fileData = fileResponse.data;
+      console.log("File uploaded:", fileData);
+
+      const geminiResponse = await axios.post(
+        "/.netlify/functions/gemini-service",
+        {
+          fileUri: fileData.fileUri,
+          mimeType: fileData.mimeType,
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      const geminiData = geminiResponse.data;
+      console.log("Gemini response:", geminiData);
+      const parsedData = JSON.parse(geminiData.generatedText);
+
+      const processedData = appendUniqueIds(parsedData);
+      const flattenedCustomers = processedData.customers.flat();
+      console.log(flattenedCustomers);
+      dispatch(addCustomer(processedData.customers));
+      dispatch(addProduct(processedData.products));
+      dispatch(addInvoice(processedData.invoices));
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
   return (
     <Sheet
       className="Sidebar"
@@ -230,6 +278,12 @@ export default function Sidebar() {
           startDecorator={<UploadRoundedIcon />}
           size="md"
         >
+          <input
+            type="file"
+            onChange={handleFileUpload}
+            accept=".pdf,.xls,.xlsx,.csv,.jpeg,.png,.heic,.webp,.heif"
+            style={{ display: "none" }}
+          />
           Upload Invoice
         </Button>
       </Box>
