@@ -68,11 +68,13 @@ export default function Sidebar() {
   const handleScreenChange = (screen: string) => {
     dispatch(setScreen(screen));
   };
+  const [isProcessing, setIsProcessing] = React.useState(false);
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0];
     if (!file) return;
+    setIsProcessing(true);
     const formData = new FormData();
     formData.append("file", file);
 
@@ -104,15 +106,22 @@ export default function Sidebar() {
       const parsedData = JSON.parse(geminiData.generatedText);
 
       const processedData = appendUniqueIds(parsedData);
-      const flattenedCustomers = processedData.customers.flat();
-      console.log(flattenedCustomers);
       dispatch(addCustomer(processedData.customers));
       dispatch(addProduct(processedData.products));
       dispatch(addInvoice(processedData.invoices));
+      setIsProcessing(false);
     } catch (error) {
       console.error("Error:", error);
+      setIsProcessing(false);
     }
   };
+  const fileInputRef = React.useRef<HTMLInputElement | null>(null);
+  const triggerFileInput = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
   return (
     <Sheet
       className="Sidebar"
@@ -249,7 +258,11 @@ export default function Sidebar() {
             direction="row"
             sx={{ justifyContent: "space-between", alignItems: "center" }}
           >
-            <Typography level="title-sm">Allowed File Formats :</Typography>
+            <Typography level="title-sm">
+              {isProcessing
+                ? "Uploading and Processing..."
+                : "Allowed File Formats:"}
+            </Typography>
           </Stack>
 
           <List>
@@ -277,15 +290,17 @@ export default function Sidebar() {
           color="primary"
           startDecorator={<UploadRoundedIcon />}
           size="md"
+          onClick={triggerFileInput}
         >
-          <input
-            type="file"
-            onChange={handleFileUpload}
-            accept=".pdf,.xls,.xlsx,.csv,.jpeg,.png,.heic,.webp,.heif"
-            style={{ display: "none" }}
-          />
-          Upload Invoice
+          {isProcessing ? "Processing..." : "Upload Invoice"}
         </Button>
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileUpload}
+          accept=".pdf,.xls,.xlsx,.csv,.jpeg,.png,.heic,.webp,.heif"
+          style={{ display: "none" }}
+        />
       </Box>
     </Sheet>
   );

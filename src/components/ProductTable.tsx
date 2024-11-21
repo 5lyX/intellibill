@@ -58,8 +58,9 @@ export default function ProductTable() {
               </th>
               <th style={{ padding: "12px 6px" }}>Quantity</th>
               <th style={{ padding: "12px 6px" }}>Unit Price (Rs.)</th>
-              <th style={{ padding: "12px 6px" }}>Discount (%)</th>
+              <th style={{ padding: "12px 6px" }}>Discount (Rs.)</th>
               <th style={{ padding: "12px 6px" }}>Tax (%)</th>
+              <th style={{ padding: "12px 6px" }}>Tax (Rs.)</th>
               <th style={{ padding: "12px 6px" }}>Price with Tax (Rs.)</th>
             </tr>
           </thead>
@@ -76,8 +77,11 @@ export default function ProductTable() {
                   <Typography level="body-xs">{row.unitPrice}</Typography>
                 </td>
                 <td>
+                  <Typography level="body-xs">{row.discount}</Typography>
+                </td>
+                <td>
                   <Typography level="body-xs">
-                    {row.discount ? row.discount : "N/A"}
+                    {row.taxPercentage} {`%`}
                   </Typography>
                 </td>
                 <td>

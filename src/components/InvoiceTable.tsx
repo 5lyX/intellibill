@@ -54,15 +54,16 @@ export default function InvoiceTable() {
         >
           <thead>
             <tr>
-              <th style={{ padding: "12px 6px" }}>Serial Number</th>
-              <th style={{ width: "15%", padding: "12px 6px" }}>Customer</th>
-              <th style={{ width: "15%", padding: "12px 6px" }}>
+              <th style={{ padding: "10px 6px" }}>Serial Number</th>
+              <th style={{ width: "10%", padding: "10px 6px" }}>Customer</th>
+              <th style={{ width: "18%", padding: "10px 6px" }}>
                 Product Name
               </th>
-              <th style={{ padding: "12px 6px" }}>Quantity</th>
-              <th style={{ padding: "12px 6px" }}>Tax (%)</th>
-              <th style={{ padding: "12px 6px" }}>Total Amount (Rs.)</th>
-              <th style={{ padding: "12px 6px" }}>Date</th>
+              <th style={{ padding: "10px 6px" }}>Quantity</th>
+              <th style={{ padding: "10px 6px" }}>Tax (%)</th>
+              <th style={{ padding: "10px 6px" }}>Tax (Rs.)</th>
+              <th style={{ padding: "10px 6px" }}>Total Amount (Rs.)</th>
+              <th style={{ padding: "10px 6px" }}>Date</th>
             </tr>
           </thead>
           <tbody>
@@ -79,6 +80,11 @@ export default function InvoiceTable() {
                 </td>
                 <td>
                   <Typography level="body-xs">{row.quantity}</Typography>
+                </td>
+                <td>
+                  <Typography level="body-xs">
+                    {row.taxPercentage} {`%`}
+                  </Typography>
                 </td>
                 <td>
                   <Typography level="body-xs">{row.tax}</Typography>
