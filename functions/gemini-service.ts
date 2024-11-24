@@ -5,7 +5,7 @@ export const handler: Handler = async (event: any) => {
   try {
     const { fileUri, mimeType } = JSON.parse(event.body);
     console.log(fileUri, mimeType);
-    const genAI = new GoogleGenerativeAI(process.env.REACT_APP_API_KEY);
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
     const schema = {
       description:

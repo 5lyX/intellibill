@@ -49,7 +49,7 @@ export const handler: Handler = async (event) => {
       };
     }
 
-    const fileManager = new GoogleAIFileManager(process.env.REACT_APP_API_KEY!);
+    const fileManager = new GoogleAIFileManager(process.env.GEMINI_API_KEY!);
 
     const uploadResponse = await fileManager.uploadFile(tempFilePath, {
       mimeType: type,
@@ -272,7 +272,7 @@ processedData = {
 
   `;
 
-  const genAI = new GoogleGenerativeAI(process.env.REACT_APP_API_KEY!);
+  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-001" });
   const result = await model.generateContent(prompt);
   console.log(result.response.text());
