@@ -53,7 +53,7 @@ export default function Sidebar() {
         }
       );
       const fileData = fileResponse.data;
-      console.log("File uploaded:", fileData);
+      // console.log("File uploaded:", fileData);
 
       let processedData;
 
@@ -62,7 +62,7 @@ export default function Sidebar() {
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
         file.name.endsWith(".xlsx")
       ) {
-        console.log("Excel file detected, skipping Gemini service.");
+        // console.log("Excel file detected, skipping Gemini service.");
         processedData = JSON.parse(fileData.result);
       } else {
         const geminiResponse = await axios.post(
@@ -77,11 +77,11 @@ export default function Sidebar() {
         );
 
         const geminiData = geminiResponse.data;
-        console.log("Gemini response:", geminiData);
+        // console.log("Gemini response:", geminiData);
         processedData = JSON.parse(geminiData.generatedText);
       }
       const finalData = appendUniqueIds(processedData);
-      console.log(finalData);
+      // console.log(finalData);
       dispatch(addCustomer(finalData.customers));
       dispatch(addProduct(finalData.products));
       dispatch(addInvoice(finalData.invoices));

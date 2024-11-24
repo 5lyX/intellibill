@@ -45,7 +45,9 @@ export default function HomeScreen() {
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
         file.name.endsWith(".xlsx")
       ) {
-        setGeneratedText(fileData.result);
+        setGeneratedText(
+          "Open Invoices, Customers or Products Tab to see the data. Or upload a new file to add more data."
+        );
         processedData = JSON.parse(fileData.result);
       } else {
         const geminiResponse = await axios.post(
@@ -60,7 +62,9 @@ export default function HomeScreen() {
         );
 
         const geminiData = geminiResponse.data;
-        setGeneratedText(geminiData.generatedText);
+        setGeneratedText(
+          "Open Invoices, Customers or Products Tab to see the data. Or upload a new file to add more data."
+        );
         processedData = JSON.parse(geminiData.generatedText);
       }
 
@@ -93,8 +97,7 @@ export default function HomeScreen() {
       </Typography>
       <Box sx={{ minHeight: 20 }}></Box>
       <Typography level="body-md">
-        Drag and drop a file or click the button below to upload it. Files up to
-        20MB are supported.
+        Click the button below to upload a file. Files up to 20MB are supported.
       </Typography>
       <Box sx={{ minHeight: 20 }}></Box>
       <Card
@@ -146,9 +149,7 @@ export default function HomeScreen() {
         {fileName ? (
           <Typography level="body-sm">Selected File: {fileName}</Typography>
         ) : (
-          <Typography level="body-sm">
-            Click or Drag a file to upload
-          </Typography>
+          <Typography level="body-sm">Click here to upload a file</Typography>
         )}
       </Box>
       {isUploading ? (
@@ -170,7 +171,6 @@ export default function HomeScreen() {
             maxWidth: "800px",
           }}
         >
-          <Typography level="body-md">Generated Text:</Typography>
           <Typography level="body-sm" sx={{ whiteSpace: "pre-wrap" }}>
             {generatedText}
           </Typography>

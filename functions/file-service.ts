@@ -38,7 +38,7 @@ export const handler: Handler = async (event) => {
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     ) {
       const result = await processExcel(fileToUploadPath);
-      console.log("Final Processed Data:", result);
+      // console.log("Final Processed Data:", result);
       fs.unlinkSync(tempFilePath);
       if (fileToUploadPath !== tempFilePath) {
         fs.unlinkSync(fileToUploadPath);
@@ -152,7 +152,7 @@ async function readExcel(filepath: string) {
       row["Serial Number"] &&
       row["Serial Number"].toString().toLowerCase() !== "totals"
   );
-  console.log("Rows :", rows);
+  // console.log("Rows :", rows);
   return { columnNames, rows };
 }
 
@@ -219,7 +219,7 @@ All numeric fields should be positive.
 If there is no Customer/Party Name field, the customers array will be empty. (i.e. {"customers":[]}, invoices and products will be filled appropriatly with the customerName field empty.)
 If there is no Product Name field, the products array will be empty. (i.e. {"products":[]}, customers and invoices will be filled appropriatly with the productName field empty.)
 Calculate the missing data using data from other columns.
-example : We can calculate tax % by using taxAmount and priceWithTax. Similarly we can calculate tax amount by calculating priceWithTax - unitPrice.
+example : We can calculate Tax (%) by using Tax Amount and Price With Tax. Similarly we can calculate Tax Amount by calculating Price With Tax - Unit Price.
 Return an empty string '' for any missing data (including missing column names).
 Party Company Name field is not equivalent to Product field. Do not use it as productName.
 The date field must remain unmodified from its original format in the rows.
@@ -275,20 +275,20 @@ processedData = {
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-001" });
   const result = await model.generateContent(prompt);
-  console.log(result.response.text());
+  // console.log(result.response.text());
   return result.response.text();
 }
 
 async function processExcel(filePath) {
   const { columnNames, rows } = await readExcel(filePath);
-  console.log("Extracted Column Names:", columnNames);
+  // console.log("Extracted Column Names:", columnNames);
   const generatedLogic = await generateQueryUsingGemini(columnNames, rows);
-  console.log("Generated Logic:\n", generatedLogic);
+  // console.log("Generated Logic:\n", generatedLogic);
   const sanitizedLogic = generatedLogic
     .trim()
     .replace(/^```typescript\n/, "")
     .replace(/\n```$/, "");
-  console.log("Sanitized Generated Logic:\n", sanitizedLogic);
+  // console.log("Sanitized Generated Logic:\n", sanitizedLogic);
   let processedData: any;
   try {
     // eslint-disable-next-line no-eval
