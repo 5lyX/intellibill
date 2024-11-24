@@ -44,7 +44,7 @@ $ yarn install
 
 #### 4. Edit the `package.json` file depending upon the OS you are using :
 
-#####For Windows Users , your scripts should look like :
+##### For Windows Users , your scripts should look like :
 
 ```json
 ...
@@ -55,7 +55,7 @@ $ yarn install
   ....
 ```
 
-#####For MacOS / Linux Users , your scripts should look like :
+##### For MacOS / Linux Users , your scripts should look like :
 
 ```json
 ...
