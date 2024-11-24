@@ -5,6 +5,7 @@ type Customer = {
   customerName: string;
   phoneNumber: string;
   totalPurchaseAmount: number;
+  customerCompany: string;
 };
 
 type CustomerState = Customer[];
