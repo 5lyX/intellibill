@@ -46,24 +46,24 @@ $ yarn install
 
 ##### For Windows Users , your scripts should look like :
 
-```json
+```
 ...
 "scripts": {
      ...,
     "netlify": ".\\node_modules\\.bin\\netlify"
   },
-  ....
+...
 ```
 
 ##### For MacOS / Linux Users , your scripts should look like :
 
-```json
+```
 ...
 "scripts": {
      ...,
     "netlify": "./node_modules/.bin/netlify"
   },
-  ....
+...
 ```
 
 #### 5. Then, you can run the app on `localhost:8888` by the command :
