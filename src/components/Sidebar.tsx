@@ -26,40 +26,6 @@ import { addCustomer } from "../features/customerScreen/customerSlice";
 import { addProduct } from "../features/productScreen/productSlice";
 import { addInvoice } from "../features/invoiceScreen/invoiceSlice";
 
-function Toggler({
-  defaultExpanded = false,
-  renderToggle,
-  children,
-}: {
-  defaultExpanded?: boolean;
-  children: React.ReactNode;
-  renderToggle: (params: {
-    open: boolean;
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  }) => React.ReactNode;
-}) {
-  const [open, setOpen] = React.useState(defaultExpanded);
-  return (
-    <React.Fragment>
-      {renderToggle({ open, setOpen })}
-      <Box
-        sx={[
-          {
-            display: "grid",
-            transition: "0.2s ease",
-            "& > *": {
-              overflow: "hidden",
-            },
-          },
-          open ? { gridTemplateRows: "1fr" } : { gridTemplateRows: "0fr" },
-        ]}
-      >
-        {children}
-      </Box>
-    </React.Fragment>
-  );
-}
-
 export default function Sidebar() {
   const dispatch = useDispatch();
   const currentScreen = useSelector(
@@ -86,29 +52,39 @@ export default function Sidebar() {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
-
       const fileData = fileResponse.data;
       console.log("File uploaded:", fileData);
 
-      const geminiResponse = await axios.post(
-        "/.netlify/functions/gemini-service",
-        {
-          fileUri: fileData.fileUri,
-          mimeType: fileData.mimeType,
-        },
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      let processedData;
 
-      const geminiData = geminiResponse.data;
-      console.log("Gemini response:", geminiData);
-      const parsedData = JSON.parse(geminiData.generatedText);
+      if (
+        file.type ===
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+        file.name.endsWith(".xlsx")
+      ) {
+        console.log("Excel file detected, skipping Gemini service.");
+        processedData = JSON.parse(fileData.result);
+      } else {
+        const geminiResponse = await axios.post(
+          "/.netlify/functions/gemini-service",
+          {
+            fileUri: fileData.fileUri,
+            mimeType: fileData.mimeType,
+          },
+          {
+            headers: { "Content-Type": "application/json" },
+          }
+        );
 
-      const processedData = appendUniqueIds(parsedData);
-      dispatch(addCustomer(processedData.customers));
-      dispatch(addProduct(processedData.products));
-      dispatch(addInvoice(processedData.invoices));
+        const geminiData = geminiResponse.data;
+        console.log("Gemini response:", geminiData);
+        processedData = JSON.parse(geminiData.generatedText);
+      }
+      const finalData = appendUniqueIds(processedData);
+      console.log(finalData);
+      dispatch(addCustomer(finalData.customers));
+      dispatch(addProduct(finalData.products));
+      dispatch(addInvoice(finalData.invoices));
       setIsProcessing(false);
     } catch (error) {
       console.error("Error:", error);
@@ -267,17 +243,13 @@ export default function Sidebar() {
 
           <List>
             <ListItem>
-              <Typography level="body-xs">
-                Documents : PDF, Excel, CSV or
-              </Typography>
+              <Typography level="body-xs">Documents : PDF, Excel or</Typography>
             </ListItem>
             <ListItem>
-              <Typography level="body-xs">
-                Images : PNG, JPEG, WEBP, HEIC, HEIF
-              </Typography>
+              <Typography level="body-xs">Images : PNG, JPEG</Typography>
             </ListItem>
             <ListItem>
-              <Typography level="body-xs">Max Size : 10 MB</Typography>
+              <Typography level="body-xs">Max Size : 20 MB</Typography>
             </ListItem>
           </List>
         </Card>

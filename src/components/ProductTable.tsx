@@ -8,6 +8,19 @@ export default function ProductTable() {
   const products = useSelector(selectProducts);
   const reversedProducts = [...products].reverse();
 
+  const isColumnEmpty = (key: any) =>
+    reversedProducts.every((row) => !row[key] && row[key] !== 0);
+
+  const headers = [
+    { key: "name", label: "Product Name" },
+    { key: "quantity", label: "Quantity" },
+    { key: "unitPrice", label: "Unit Price (Rs.)" },
+    { key: "discount", label: "Discount (Rs.)" },
+    { key: "taxPercentage", label: "Tax (%)" },
+    { key: "tax", label: "Tax (Rs.)" },
+    { key: "priceWithTax", label: "Price with Tax (Rs.)" },
+  ];
+
   return (
     <Sheet
       className="OrderTableContainer"
@@ -53,20 +66,22 @@ export default function ProductTable() {
         >
           <thead>
             <tr>
-              <th style={{ width: "30%", padding: "12px 6px" }}>
-                Product Name
-              </th>
-              <th style={{ padding: "12px 6px" }}>Quantity</th>
-              <th style={{ padding: "12px 6px" }}>Unit Price (Rs.)</th>
-              <th style={{ padding: "12px 6px" }}>Discount (Rs.)</th>
-              <th style={{ padding: "12px 6px" }}>Tax (%)</th>
-              <th style={{ padding: "12px 6px" }}>Tax (Rs.)</th>
-              <th style={{ padding: "12px 6px" }}>Price with Tax (Rs.)</th>
+              {headers.map((header) => (
+                <th
+                  key={header.key}
+                  style={{
+                    padding: "12px 6px",
+                    color: isColumnEmpty(header.key) ? "red" : "inherit",
+                  }}
+                >
+                  {header.label}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
             {reversedProducts.map((row) => (
-              <tr>
+              <tr key={row.id}>
                 <td>
                   <Typography level="body-xs">{row.name}</Typography>
                 </td>

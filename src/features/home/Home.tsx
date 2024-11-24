@@ -37,39 +37,44 @@ export default function HomeScreen() {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
-
       const fileData = fileResponse.data;
-      console.log("File uploaded:", fileData);
 
-      const geminiResponse = await axios.post(
-        "/.netlify/functions/gemini-service",
-        {
-          fileUri: fileData.fileUri,
-          mimeType: fileData.mimeType,
-        },
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      let processedData;
+      if (
+        file.type ===
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+        file.name.endsWith(".xlsx")
+      ) {
+        setGeneratedText(fileData.result);
+        processedData = JSON.parse(fileData.result);
+      } else {
+        const geminiResponse = await axios.post(
+          "/.netlify/functions/gemini-service",
+          {
+            fileUri: fileData.fileUri,
+            mimeType: fileData.mimeType,
+          },
+          {
+            headers: { "Content-Type": "application/json" },
+          }
+        );
 
-      const geminiData = geminiResponse.data;
-      console.log("Gemini response:", geminiData);
+        const geminiData = geminiResponse.data;
+        setGeneratedText(geminiData.generatedText);
+        processedData = JSON.parse(geminiData.generatedText);
+      }
 
-      setGeneratedText(geminiData.generatedText);
       setUploadMessage("File processed successfully!");
-      const parsedData = JSON.parse(geminiData.generatedText);
-
-      const processedData = appendUniqueIds(parsedData);
-      const flattenedCustomers = processedData.customers.flat();
-      console.log(flattenedCustomers);
-      dispatch(addCustomer(processedData.customers));
-      dispatch(addProduct(processedData.products));
-      dispatch(addInvoice(processedData.invoices));
+      const finalData = appendUniqueIds(processedData);
+      dispatch(addCustomer(finalData.customers));
+      dispatch(addProduct(finalData.products));
+      dispatch(addInvoice(finalData.invoices));
     } catch (error) {
       console.error("Error:", error);
       setUploadMessage("An error occurred while processing the file.");
     } finally {
       setIsUploading(false);
+      event.target.value = ""; // Clear file input to allow new uploads
     }
   };
 
@@ -108,14 +113,10 @@ export default function HomeScreen() {
 
         <List>
           <ListItem>
-            <Typography level="body-xs">
-              Documents : PDF, Excel, CSV or
-            </Typography>
+            <Typography level="body-xs">Documents : PDF, Excel or</Typography>
           </ListItem>
           <ListItem>
-            <Typography level="body-xs">
-              Images : PNG, JPEG, WEBP, HEIC, HEIF
-            </Typography>
+            <Typography level="body-xs">Images : PNG, JPEG, JPG</Typography>
           </ListItem>
           <ListItem>
             <Typography level="body-xs">Max Size : 20MB</Typography>

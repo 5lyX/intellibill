@@ -7,7 +7,21 @@ import Typography from "@mui/joy/Typography";
 export default function CustomerTable() {
   const customers = useSelector(selectCustomers);
   const reversedCustomers = [...customers].reverse();
-  // console.log(customers);
+
+  const isColumnEmpty = (key: any) =>
+    reversedCustomers.every(
+      (row) =>
+        !row[key] && row[key] !== 0 && row[key] !== "N/A" && row[key] !== "null"
+    );
+
+  const headers = [
+    { key: "id", label: "User ID" },
+    { key: "customerName", label: "Name" },
+    { key: "phoneNumber", label: "Phone" },
+    { key: "totalPurchaseAmount", label: "Total Purchase Amount" },
+    { key: "customerCompany", label: "Company Name" },
+  ];
+
   return (
     <Sheet
       className="OrderTableContainer"
@@ -53,31 +67,45 @@ export default function CustomerTable() {
         >
           <thead>
             <tr>
-              <th style={{ padding: "12px 6px" }}>ID</th>
-              <th style={{ width: "15%", padding: "12px 6px" }}>Name</th>
-              <th style={{ width: "15%", padding: "12px 6px" }}>Phone</th>
-              <th style={{ padding: "12px 6px" }}>Total Purchase Amount</th>
+              {headers.map((header) => (
+                <th
+                  key={header.key}
+                  style={{
+                    padding: "12px 6px",
+                    color: isColumnEmpty(header.key) ? "red" : "inherit",
+                  }}
+                >
+                  {header.label}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
             {reversedCustomers.map((customer) => (
               <tr key={customer.id}>
                 <td>
-                  <Typography level="body-xs">{customer.id}</Typography>
-                </td>
-                <td>
                   <Typography level="body-xs">
-                    {customer.customerName}
+                    {customer.id?.slice(0, 6) || "N/A"}
                   </Typography>
                 </td>
                 <td>
                   <Typography level="body-xs">
-                    {customer.phoneNumber}
+                    {customer.customerName || "N/A"}
                   </Typography>
                 </td>
                 <td>
                   <Typography level="body-xs">
-                    {customer.totalPurchaseAmount}
+                    {customer.phoneNumber || "N/A"}
+                  </Typography>
+                </td>
+                <td>
+                  <Typography level="body-xs">
+                    {customer.totalPurchaseAmount || "N/A"}
+                  </Typography>
+                </td>
+                <td>
+                  <Typography level="body-xs">
+                    {customer.customerCompany || "N/A"}
                   </Typography>
                 </td>
               </tr>

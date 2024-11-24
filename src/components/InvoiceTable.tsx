@@ -6,8 +6,21 @@ import Typography from "@mui/joy/Typography";
 
 export default function InvoiceTable() {
   const invoices = useSelector(selectInvoices);
-  console.log(invoices);
   const reversedInvoices = [...invoices].reverse();
+
+  const isColumnEmpty = (key: any) =>
+    reversedInvoices.every((row) => !row[key] && row[key] !== 0);
+
+  const headers = [
+    { key: "serialNumber", label: "Serial Number" },
+    { key: "customerName", label: "Customer" },
+    { key: "productName", label: "Product Name" },
+    { key: "quantity", label: "Quantity" },
+    { key: "taxPercentage", label: "Tax (%)" },
+    { key: "tax", label: "Tax (Rs.)" },
+    { key: "totalAmount", label: "Total Amount (Rs.)" },
+    { key: "date", label: "Date" },
+  ];
 
   return (
     <Sheet
@@ -54,16 +67,17 @@ export default function InvoiceTable() {
         >
           <thead>
             <tr>
-              <th style={{ padding: "10px 6px" }}>Serial Number</th>
-              <th style={{ width: "10%", padding: "10px 6px" }}>Customer</th>
-              <th style={{ width: "18%", padding: "10px 6px" }}>
-                Product Name
-              </th>
-              <th style={{ padding: "10px 6px" }}>Quantity</th>
-              <th style={{ padding: "10px 6px" }}>Tax (%)</th>
-              <th style={{ padding: "10px 6px" }}>Tax (Rs.)</th>
-              <th style={{ padding: "10px 6px" }}>Total Amount (Rs.)</th>
-              <th style={{ padding: "10px 6px" }}>Date</th>
+              {headers.map((header) => (
+                <th
+                  key={header.key}
+                  style={{
+                    padding: "10px 6px",
+                    color: isColumnEmpty(header.key) ? "red" : "inherit",
+                  }}
+                >
+                  {header.label}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
@@ -76,7 +90,9 @@ export default function InvoiceTable() {
                   <Typography level="body-xs">{row.customerName}</Typography>
                 </td>
                 <td>
-                  <Typography level="body-xs">{row.productName}</Typography>
+                  <Typography level="body-xs">
+                    {row.productName ? row.productName : "N/A"}
+                  </Typography>
                 </td>
                 <td>
                   <Typography level="body-xs">{row.quantity}</Typography>
