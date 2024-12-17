@@ -2,20 +2,6 @@
 
 Intellibill is an AI powered data extraction and invoice management system that uses Gemini API to process invoice files of any type (images, excel sheet or PDFs), extract the important information and display it in the form of three tables (products, customers and invoices).
 
-Demo Video :
-
-Site link :
-
-Test Cases Solved:
-
-- Testcase 1 : completely solved
-- Testcase 2 : all solved except invoice3.pdf
-- Testcase 3 : completely solved
-- Testcase 4 : completely solved
-- Testcase 5 : all solved except INV-54CZS_Test_Assam.pdf (invoice3.pdf)
-
-\*Possible ways to solve invoice3/Test_Assam is also discussed below.
-
 The system uses two serverless functions file-service and gemini-service for Google File API and Gemini API respectively. How the AI system works is described below.
 Any missing data column in the uploaded invoice file is marked with red color in the table to highlight absence of column.
 
@@ -91,18 +77,4 @@ Then I came across [Tabular Question Answering](https://huggingface.co/tasks/tab
 ![excel sheet processing](docs/excel.png)
 
 Instead of directly processing the file, Gemini API is now used to generate typescript code that will process the parsed excel sheet data to generate the desired json output.
-
-#### Alternative Methods ?
-
-I found a few other alternatives to the above method :
-
-- Use a dedicated table question answering model such as microsoft/tapex or google/tapas-base ( Since it required additional infrastructure I did not try it ).
-- Use excel parsing to generate a JSON file and pass it to Gemini API to process. (tried but results were not so good for untuned model)
-
-#### Problem with invoice3(or Test_Assam) :
-
-While working with this pdf file, I realised the number of items in this file is large and I received a timeout ( 30 sec ) from Gemini API everytime on processing this file. Possible workarounds could be :
-
-- Using a self hosted general LLM model with larger request timeout or buy premium plan for extended timeout period.
-- Parse the PDF to extract relevant data and prompt it to Gemini API to generate desired JSON output. (The PDF parsing part would have required great effort and time, so I decided not to implement given the time constraints)
-- Probably for large number of records a tabular question answer model might perform better.
+Disclaimer : While deploying the app on netlify, if it's hitting the limit of free tier functions execution, you may opt for other deploying methods. For local setup everything will work fine.
